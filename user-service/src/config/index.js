@@ -7,6 +7,7 @@ const config = {
   NODE_ENV: process.env.NODE_ENV,
   LOG_LEVEL: process.env.LOG_LEVEL,
   ALLOW_ORIGIN: process.env.ALLOW_ORIGIN,
+  REDIS_URL: process.env.REDIS_URL,
 };
 
 export default config;
