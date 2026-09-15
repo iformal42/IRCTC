@@ -5,7 +5,7 @@ class AppErorr extends Error {
     this.code = code;
     this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
     this.isOperational = true;
-    ERROR.captureStackTrace(this, this.constructor);
+    Error.captureStackTrace(this, this.constructor);
   }
 }
 
@@ -33,10 +33,31 @@ class ForbiddenError extends AppErorr {
   }
 }
 
-export default {
+class ConflictError extends AppErorr {
+  constructor(message, code = "CONFLICT") {
+    super(message, 409, code);
+  }
+}
+
+class ServerError extends AppErorr {
+  constructor(message, code = "SERVER_ERROR") {
+    super(message, 500, code);
+  }
+}
+
+class TooManyRequest extends AppErorr {
+  constructor(message, code = "TOO_MANY_REQUEST") {
+    super(message, 429, code);
+  }
+}
+
+export {
   AppErorr,
   BadRequestError,
   NotFoundError,
   UnauthorizedError,
   ForbiddenError,
+  ConflictError,
+  ServerError,
+  TooManyRequest,
 };
