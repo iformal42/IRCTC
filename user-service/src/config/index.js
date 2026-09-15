@@ -12,6 +12,9 @@ const config = {
   RESEND_KEY: process.env.RESEND_KEY,
   OTP_TTL: Number(process.env.OTP_TTL) || 300,
   MAIL_FROM: process.env.MAIL_FROM,
+  OTP_HMAC_SECRET: process.env.OTP_HMAC_SECRET,
+  OTP_RATE_MAX_PER_HOUR: Number(process.env.OTP_RATE_MAX_PER_HOUR) || 5,
+  OTP_MAX_VERIFY_ATTEMPTS: Number(process.env.OTP_MAX_VERIFY_ATTEMPTS) || 5,
 };
 
 export default config;
