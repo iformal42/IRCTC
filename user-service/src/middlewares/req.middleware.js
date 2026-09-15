@@ -1,10 +1,11 @@
 import logger from "../config/logger.js";
 
 const reqLogger = (req, res, next) => {
+  // console.log("req.method");
   logger.debug(`[${req.method}] [${req.originalUrl}] `);
   const start = Date.now();
 
-  req.on("finish", () => {
+  res.on("finish", () => {
     const duration = Date.now() - start;
     logger.info(
       `[${req.method}] [${req.originalUrl}] - status: [${res.statusCode}] [${duration}ms]`,
