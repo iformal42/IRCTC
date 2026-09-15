@@ -4,6 +4,7 @@ import logger from "./logger.js";
 class RedisClient {
   static instance = null;
   static isConnected = false;
+  constructor() {}
   static getInstance() {
     if (!RedisClient.instance) {
       RedisClient.instance = new Redis(config.REDIS_URL, {
@@ -18,9 +19,11 @@ class RedisClient {
     return RedisClient.instance;
   }
 
-  setUpEventListeners() {
+  static setUpEventListeners() {
+    RedisClient.instance.on("connecting", () => {
+      logger.info("Redis is connecting..");
+    });
     RedisClient.instance.on("connect", () => {
-      RedisClient.isConnected = true;
       logger.info("Redis connected");
     });
 
@@ -36,5 +39,18 @@ class RedisClient {
     RedisClient.instance.on("reconnecting", () => {
       logger.warn("Redis reconnecting...");
     });
+
+    RedisClient.instance.on("ready", () => {
+      RedisClient.isConnected = true;
+
+      logger.warn("Redis client is ready");
+    });
+
+    RedisClient.instance.on("end", () => {
+      RedisClient.isConnected = false;
+      logger.warn("Redis connection ended");
+    });
   }
 }
+const redis = RedisClient.getInstance();
+export { redis };
