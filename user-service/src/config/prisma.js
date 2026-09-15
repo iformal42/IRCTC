@@ -2,12 +2,14 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import config from "./index.js";
 const globalForPrisma = global;
-const connctionString = config.DATABASE_URL;
+const connectionString = config.DATABASE_URL;
+
 if (!globalForPrisma.prisma) {
-  const adapter = new PrismaPg({ datasourceUrl: connctionString });
-  const prisma = new PrismaClient({
+  const adapter = new PrismaPg({ connectionString });
+  globalForPrisma.prisma = new PrismaClient({
     adapter,
     log: ["error", "warn", "info"],
   });
-  globalForPrisma.prisma = prisma;
 }
+const prisma = globalForPrisma.prisma;
+export default prisma;
