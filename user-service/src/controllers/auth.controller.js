@@ -109,4 +109,27 @@ const rotatedRefreshToken = catchAsync(async (req, res) => {
   });
 });
 
-export { sentOTP, verifyOtp, login, rotatedRefreshToken };
+const verifyGoogleIdToken = catchAsync(async (req, res) => {
+  const { idToken } = req.body;
+  if (!idToken) {
+    throw new BadRequestError("Invalide Google ID Token", "INVALID TOKEN");
+  }
+  const deviceId = getFingerPrint(req);
+
+  const { accessToken, refreshToken, loginnedUser } =
+    await authService.verifyGoogleIdToken(idToken, deviceId);
+
+  setCookies(res, "accessToken", accessToken, {
+    maxAge: config.ACCESS_TOKEN_EXP * 60 * 1000, // minisec
+  });
+
+  setCookies(res, "refreshToken", refreshToken, {
+    maxAge: config.REFRESH_TOKEN_EXP * DAY * 1000, // minisec
+  });
+
+  return res.status(201).json({
+    success: true,
+    data: loginnedUser,
+  });
+});
+export { sentOTP, verifyOtp, login, rotatedRefreshToken, verifyGoogleIdToken };

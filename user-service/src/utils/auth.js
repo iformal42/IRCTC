@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import config from "../config/index.js";
+import { redis } from "../config/redis.js";
 
 export const generateAccessToken = (userId) => {
   const payLoad = {
@@ -30,3 +31,25 @@ export const verifyAccessToken = (token) =>
 
 export const verifyRefreshToken = (token) =>
   jwt.verify(token, config.JWT_REFRESH_SECRECT);
+
+export const createAndStoreToken = async (user, deviceId) => {
+  const userId = user.id;
+  const accessToken = generateAccessToken(userId);
+  const { jti, refreshToken } = generateRefreshToken(userId);
+
+  await redis.set(
+    `refresh:${userId}:${deviceId}`,
+    jti,
+    "EX",
+    config.REFRESH_TOKEN_EXP * 24 * 60 * 60,
+  );
+  const { password: _password, ...safeUser } = user;
+  await redis.set(
+    `user:${userId}:`,
+    JSON.stringify(safeUser),
+    "EX",
+    config.REDIS_USER_TTL,
+  );
+
+  return { accessToken, refreshToken, safeUser };
+};

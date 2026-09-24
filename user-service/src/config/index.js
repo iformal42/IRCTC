@@ -21,6 +21,8 @@ const config = {
   ACCESS_TOKEN_EXP: Number(process.env.ACCESS_TOKEN_EXP) || 15,
   REFRESH_TOKEN_EXP: Number(process.env.REFRESH_TOKEN_EXP) || 7,
   REDIS_USER_TTL: (Number(process.env.REDIS_USER_TTL) || 24) * HOUR,
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
 };
 
 export default config;

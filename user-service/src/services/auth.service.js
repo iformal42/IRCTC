@@ -5,15 +5,19 @@ import {
   BadRequestError,
   ConflictError,
   ForbiddenError,
+  UnauthorizedError,
 } from "../utils/error.js";
 import { generateAndStoreOtp, validateOtp } from "../utils/otp.js";
 import {
+  createAndStoreToken,
   generateAccessToken,
   generateRefreshToken,
   verifyRefreshToken,
 } from "../utils/auth.js";
 import { redis } from "../config/redis.js";
 import config from "../config/index.js";
+import { OAuth2Client } from "google-auth-library";
+const client = new OAuth2Client(config.GOOGLE_CLIENT_ID);
 
 const sendOtp = async ({ firstName, lastName, email, password }) => {
   const isUserExists = await prisma.user.findUnique({
@@ -69,22 +73,10 @@ const login = async (email, password, deviceId) => {
   if (!doesPasswordMatch) {
     throw new BadRequestError("Invalid creadentials.");
   }
-  const userId = currentUser.id;
-  const accessToken = generateAccessToken(userId);
-  const { jti, refreshToken } = generateRefreshToken(userId);
 
-  await redis.set(
-    `refresh:${userId}:${deviceId}`,
-    jti,
-    "EX",
-    config.REFRESH_TOKEN_EXP * 24 * 60 * 60,
-  );
-  const { password: _password, ...safeUser } = currentUser;
-  await redis.set(
-    `user:${userId}:`,
-    JSON.stringify(safeUser),
-    "EX",
-    config.REDIS_USER_TTL,
+  const { accessToken, refreshToken, safeUser } = await createAndStoreToken(
+    currentUser,
+    deviceId,
   );
 
   return { accessToken, refreshToken, loginnedUser: safeUser };
@@ -117,4 +109,88 @@ const rotatedRefreshToken = async (refreshToken, deviceId) => {
 
   return { newAccessToken, newRefreshToken };
 };
-export default { sendOtp, verifyOtp, login, rotatedRefreshToken };
+
+const verifyGoogleIdToken = async (idToken, deviceId) => {
+  const ticket = await client.verifyIdToken({
+    idToken,
+    audience: config.GOOGLE_CLIENT_ID,
+  });
+
+  const payload = ticket.getPayload();
+
+  if (!payload.sub || !payload.email) {
+    throw new UnauthorizedError("Invalid Google Id token");
+  }
+
+  const googleUser = {
+    provider: payload.iss,
+    providerId: payload.sub,
+    email: payload.email,
+    firstName: payload.given_name,
+    lastName: payload.family_name,
+    emailVerified: payload.email_verified || false,
+  };
+
+  const user = await prisma.$transaction(async (tx) => {
+    const isGoogleAuthenticated = await tx.authProvider.findUnique({
+      where: {
+        provider_providerId: {
+          provider: googleUser.provider,
+          providerId: googleUser.providerId,
+        },
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (isGoogleAuthenticated) {
+      return isGoogleAuthenticated.user;
+    }
+
+    const existingUser = await tx.user.findUnique({
+      where: {
+        email: googleUser.email,
+      },
+    });
+
+    if (existingUser) {
+      return await tx.authProvider.create({
+        data: {
+          provider: googleUser.provider,
+          providerId: googleUser.providerId,
+          userId: existingUser.id,
+        },
+      });
+    }
+
+    return tx.user.create({
+      data: {
+        email: googleUser.email,
+        firstName: googleUser.firstName,
+        lastName: googleUser.lastName,
+        emailVerified: googleUser.emailVerified,
+        AuthProviders: {
+          creat: {
+            provider: googleUser.provider,
+            providerId: googleUser.provider,
+          },
+        },
+      },
+    });
+  });
+
+  const { accessToken, refreshToken, safeUser } = await createAndStoreToken(
+    user,
+    deviceId,
+  );
+
+  return { accessToken, refreshToken, loginnedUser: safeUser };
+};
+export default {
+  sendOtp,
+  verifyOtp,
+  login,
+  rotatedRefreshToken,
+  verifyGoogleIdToken,
+};
