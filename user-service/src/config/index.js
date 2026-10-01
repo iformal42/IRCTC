@@ -23,6 +23,8 @@ const config = {
   REDIS_USER_TTL: (Number(process.env.REDIS_USER_TTL) || 24) * HOUR,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  KAFKA_CLIENT_ID: process.env.KAFKA_CLIENT_ID,
+  KAFKA_BROKER: process.env.KAFKA_BROKER,
 };
 
 export default config;

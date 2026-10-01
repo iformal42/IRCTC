@@ -7,6 +7,7 @@ import corsMiddleware from "./middlewares/cors.middleware.js";
 import reqLogger from "./middlewares/req.middleware.js";
 import logger from "./config/logger.js";
 import authRouter from "./routes/auth.route.js";
+import { RedisClient } from "./config/redis.js";
 
 const app = express();
 
@@ -40,4 +41,14 @@ const startServer = async () => {
     process.exit(1);
   }
 };
+
+process.on("SIGINT", async () => {
+  await RedisClient.disconnectRedis();
+  process.exit(1);
+});
+
+process.on("SIGTERM", async () => {
+  await RedisClient.disconnectRedis();
+  process.exit(1);
+});
 startServer();

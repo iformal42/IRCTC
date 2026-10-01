@@ -17,6 +17,8 @@ import {
 import { redis } from "../config/redis.js";
 import config from "../config/index.js";
 import { OAuth2Client } from "google-auth-library";
+import notficationProducer from "../kafka/producer/notification.producer.js";
+import logger from "../config/logger.js";
 const client = new OAuth2Client(config.GOOGLE_CLIENT_ID);
 
 const sendOtp = async ({ firstName, lastName, email, password }) => {
@@ -30,7 +32,8 @@ const sendOtp = async ({ firstName, lastName, email, password }) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   const meta = { firstName, lastName, email, password: hashedPassword };
   const { otp, otpSessionId } = await generateAndStoreOtp(meta);
-  await sendOTPEmail({ email, otp });
+  await notficationProducer.sendOtpEmail(email, otp, config.OTP_TTL / 60);
+  logger.info("Otp email queued for :" + email);
   return { otpSessionId };
 };
 
@@ -51,7 +54,7 @@ const verifyOtp = async (otp, otpSessionId) => {
     },
   });
 
-  await verifyOTPEmail({ email });
+  await notficationProducer.verifyOtpEmail(email);
 
   return user;
 };
