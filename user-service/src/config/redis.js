@@ -29,7 +29,9 @@ class RedisClient {
 
     RedisClient.instance.on("error", (err) => {
       RedisClient.isConnected = false;
-      logger.error("Redis error:", err);
+      logger.error(`Redis error: ${err.message}`, {
+        stack: err.stack,
+      });
     });
 
     RedisClient.instance.on("close", () => {
@@ -51,6 +53,13 @@ class RedisClient {
       logger.warn("Redis connection ended");
     });
   }
+  static async disconnectRedis() {
+    if (RedisClient.instance) {
+      await RedisClient.instance.quit();
+      RedisClient.instance = null;
+      RedisClient.isConnected = false;
+    }
+  }
 }
 const redis = RedisClient.getInstance();
-export { redis };
+export { redis, RedisClient };
