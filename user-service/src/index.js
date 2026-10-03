@@ -28,7 +28,7 @@ app.get("/health", (req, res, next) => {
 });
 
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/user", userRoute.router);
+app.use("/api/v1/users", userRoute.router);
 
 app.use(errorHandler);
 const startServer = async () => {
