@@ -1,16 +1,16 @@
-import { verifyAccessToken } from "../utils/auth";
-import { UnauthorizedError } from "../utils/error";
+import { verifyAccessToken } from "../utils/auth.js";
+import { UnauthorizedError } from "../utils/error.js";
 
-const requireAuth = (req, res, next) => {
+export const requireAuth = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || authHeader.startsWith("Bearer "))
+  if (!authHeader || !authHeader.startsWith("Bearer "))
     return next(new UnauthorizedError("Authorization token missing"));
 
   const authToken = authHeader.split(" ")[1];
   try {
-    const decoded = verifyAccessToken(authToken);
-    req.user = decoded.payload;
+    const payLoad = verifyAccessToken(authToken);
+    req.user = payLoad;
   } catch (error) {
     return next(new UnauthorizedError("Invalide auth token!"));
   }

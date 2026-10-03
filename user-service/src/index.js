@@ -8,6 +8,7 @@ import reqLogger from "./middlewares/req.middleware.js";
 import logger from "./config/logger.js";
 import authRouter from "./routes/auth.route.js";
 import { RedisClient } from "./config/redis.js";
+import userRoute from "./routes/user.route.js";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.get("/health", (req, res, next) => {
 });
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/user", userRoute.router);
 
 app.use(errorHandler);
 const startServer = async () => {
