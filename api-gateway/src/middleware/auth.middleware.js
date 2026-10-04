@@ -11,6 +11,7 @@ export const requireAuth = (req, res, next) => {
   try {
     const payLoad = verifyAccessToken(authToken);
     req.user = payLoad;
+    req.headers["x-user-id"] = payLoad.userId;
   } catch (error) {
     return next(new UnauthorizedError("Invalide auth token!"));
   }

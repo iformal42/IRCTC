@@ -51,6 +51,17 @@ class TooManyRequest extends AppErorr {
   }
 }
 
+class ServiceUnavailableError extends AppErorr {
+  constructor(message, code = "SER  VICE_UNAVAILABLE") {
+    super(message, 503, code);
+  }
+}
+
+class GatewayTimeoutError extends AppErorr {
+  constructor(message, code = "GATEWAY_TIMEOUT") {
+    super(message, 504, code);
+  }
+}
 export {
   AppErorr,
   BadRequestError,
@@ -60,4 +71,6 @@ export {
   ConflictError,
   ServerError,
   TooManyRequest,
+  ServiceUnavailableError,
+  GatewayTimeoutError,
 };

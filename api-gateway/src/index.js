@@ -9,6 +9,7 @@ import { notFoundMiddleware } from "./middleware/notFound.middleware.js";
 import corsMiddleware from "./middleware/cors.middleware.js";
 import reqLogger from "./middleware/req.middleware.js";
 import errorHandler from "./middleware/error.middleware.js";
+import routes from "./routes/index.js";
 
 const app = express();
 
@@ -22,15 +23,12 @@ if (config.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-app.get("/", (req, res, next) => {
-  res.send("heelo ");
-});
 app.get("/health", (req, res, next) => {
   res.status(200).json({
     message: "ok",
   });
 });
-
+app.use("/api", routes);
 app.use(notFoundMiddleware);
 
 app.use(errorHandler);
