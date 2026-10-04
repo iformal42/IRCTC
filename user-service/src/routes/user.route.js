@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { requireAuth } from "../middlewares/auth.middleware.js";
 import { getUserProfile } from "../controllers/user.controller.js";
+import { getUserContext } from "../middlewares/getUserContext.middleware.js";
 
 const router = Router();
 
-router.get("/profile", requireAuth, getUserProfile);
+router.get("/profile", getUserContext, getUserProfile);
 
 export default { router };

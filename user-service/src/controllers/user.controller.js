@@ -3,8 +3,7 @@ import catchAsync from "../utils/catchAsync.js";
 import { BadRequestError } from "../utils/error.js";
 
 const getUserProfile = catchAsync(async (req, res) => {
-  //   console.log("userId", req);
-  const userId = req.user.userId;
+  const userId = req?.user?.userId;
   if (!userId) {
     throw new BadRequestError("User ID is missing in the request");
   }
