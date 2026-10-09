@@ -1,5 +1,5 @@
+import catchAsync from "../../../shared/constans/catchAsync.js";
 import userService from "../services/user.service.js";
-import catchAsync from "../utils/catchAsync.js";
 import { BadRequestError } from "../utils/error.js";
 
 const getUserProfile = catchAsync(async (req, res) => {

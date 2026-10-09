@@ -1,6 +1,6 @@
+import catchAsync from "../../../shared/constans/catchAsync.js";
 import config from "../config/index.js";
 import authService from "../services/auth.service.js";
-import catchAsync from "../utils/catchAsync.js";
 import { setCookies } from "../utils/cookies.js";
 import { getFingerPrint } from "../utils/deviceFingerprint.js";
 import { BadRequestError, UnauthorizedError } from "../utils/error.js";
