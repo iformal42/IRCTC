@@ -8,8 +8,15 @@ const userServiceProxy = createproxy(
   config.SERVCIES.USER_SERVICE_NAME,
   config.SERVCIES.USER_SERVICE_URL,
 );
+const adminServiceProxy = createproxy(
+  config.SERVCIES.ADMIN_SERVICE_NAME,
+  config.SERVCIES.ADMIN_SERVICE_URL,
+);
 // TODO: to create rate limiter middleware
 router.post("/users/auth/login", userServiceProxy);
 router.get("/users/user/profile", requireAuth, userServiceProxy);
+
+router.post("/admins/station", requireAuth, adminServiceProxy);
+router.post("/admins/train", requireAuth, adminServiceProxy);
 
 export default router;
