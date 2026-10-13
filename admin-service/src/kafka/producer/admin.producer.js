@@ -79,6 +79,17 @@ class AdminProducer {
       },
     );
   }
+  async publishScheduleCreated(schedule) {
+    return this.sendMessage(
+      KAFKA_TOPICS.CREATE_SCHEDULE,
+      `route-${schedule.id}`,
+      {
+        eventType: "SCHEDULE_CREATED",
+        data: schedule,
+        timestamp: new Date().toISOString(),
+      },
+    );
+  }
 }
 
 const adminProducer = new AdminProducer();
