@@ -60,10 +60,21 @@ class AdminProducer {
   async publishTrainCreated(trainData) {
     return this.sendMessage(
       KAFKA_TOPICS.CREATE_TRAIN,
-      `station-${trainData.trainNumber}`,
+      `train-${trainData.trainNumber}`,
       {
         eventType: "TRAIN_CREATED",
         data: trainData,
+        timestamp: new Date().toISOString(),
+      },
+    );
+  }
+  async publishRouteCreated(routeData) {
+    return this.sendMessage(
+      KAFKA_TOPICS.CREATE_ROUTE,
+      `route-${routeData.id}`,
+      {
+        eventType: "ROUTE_CREATED",
+        data: routeData,
         timestamp: new Date().toISOString(),
       },
     );
