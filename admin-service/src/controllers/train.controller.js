@@ -35,3 +35,23 @@ export const createTrain = catchAsync(async (req, res) => {
     data: train,
   });
 });
+
+export const createRoute = catchAsync(async (req, res) => {
+  const { trainNumber, stations } = req.body;
+
+  if (!trainNumber || !stations || !Array.isArray(stations)) {
+    throw new BadRequestError("Train number and stations array required");
+  }
+
+  if (stations.length < 2) {
+    throw new BadRequestError("Source and destination required");
+  }
+
+  const routes = await trainService.createRoutes({ trainNumber, routes:stations });
+
+  res.status(201).json({
+    success: "true",
+    message: "route created",
+    data: routes,
+  });
+});
