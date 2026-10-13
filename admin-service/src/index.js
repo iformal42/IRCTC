@@ -9,6 +9,7 @@ import logger from "./config/logger.js";
 import { notFoundMiddleware } from "./middlewares/notFound.middleware.js";
 import stationRouter from "./routes/station.route.js";
 import trainRouter from "./routes/train.route.js";
+import scheduleRouter from "./routes/schedule.route.js";
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.get("/health", (req, res, next) => {
 
 app.use("/api/v1/train", trainRouter);
 app.use("/api/v1/station", stationRouter);
+app.use("/api/v1/schedule", scheduleRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandler);
