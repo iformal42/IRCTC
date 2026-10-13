@@ -18,5 +18,6 @@ router.get("/users/user/profile", requireAuth, userServiceProxy);
 
 router.post("/admins/station", requireAuth, adminServiceProxy);
 router.post("/admins/train", requireAuth, adminServiceProxy);
+router.post("/admins/train/route", requireAuth, adminServiceProxy);
 
 export default router;
