@@ -53,6 +53,9 @@ export const createRoutes = async (data) => {
 
   const train = await prisma.train.findUnique({
     where: { trainNumber },
+    include: {
+      seats: { orderBy: { seatNumber: "asc" } },
+    },
   });
 
   if (!train) {
@@ -113,7 +116,7 @@ export const createRoutes = async (data) => {
     },
   });
 
-  adminProducer.publishRouteCreated(newRoute).catch((err) => {
+  adminProducer.publishRouteCreated({ ...newRoute, train }).catch((err) => {
     logger.error("Failed to published create route event", {
       error: err.message,
     });
