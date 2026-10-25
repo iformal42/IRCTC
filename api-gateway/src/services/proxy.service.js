@@ -84,6 +84,9 @@ const circuiteBreaker = {
   [config.SERVCIES.ADMIN_SERVICE_NAME]: new CircuitBreaker(
     config.SERVCIES.ADMIN_SERVICE_NAME,
   ),
+  [config.SERVCIES.SEARCH_SERVICE_NAME]: new CircuitBreaker(
+    config.SERVCIES.SEARCH_SERVICE_NAME,
+  ),
 };
 
 export const forwardProxy = async ({
