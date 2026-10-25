@@ -9,8 +9,7 @@ export function windowRateLimit(requestsCount, window) {
     const ip = req.ip || req.connection.remoteAddress;
     const key = `rate-${ip}`;
     let queue = new Queue();
-    if (ipMap.has(key)) queue = ipMap[key];
-
+    if (ipMap.has(key)) queue = ipMap.get(key);
     const size = queue.size();
     const currentTime = Date.now();
     const windowMs = window * 1000;
@@ -32,7 +31,7 @@ export function windowRateLimit(requestsCount, window) {
       queue.push(currentTime);
     }
 
-    ipMap.set(queue);
+    ipMap.set(key, queue);
     next();
   };
 }
