@@ -9,6 +9,7 @@ import logger from "./config/logger.js";
 import { notFoundMiddleware } from "./middlewares/notFound.middleware.js";
 import { initIndices } from "./config/elasticsSearch.js";
 import searchCosumer from "./kafka/consumer/search.consumer.js";
+import searchRouter from "./routes/search.route.js";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.get("/health", (req, res, next) => {
   });
 });
 
+app.use("/api/v1/search", searchRouter);
 app.use(notFoundMiddleware);
 app.use(errorHandler);
 const startServer = async () => {
