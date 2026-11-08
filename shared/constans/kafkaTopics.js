@@ -5,4 +5,5 @@ export const KAFKA_TOPICS = {
   CREATE_TRAIN: "admin.train-create",
   CREATE_ROUTE: "admin.route-create",
   CREATE_SCHEDULE: "admin.schedule-create",
+  SEAT_AVAILABILITY_UPDATED: "inventory.seat-availability-updated",
 };

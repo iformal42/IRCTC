@@ -7,6 +7,8 @@ import corsMiddleware from "./middlewares/cors.middleware.js";
 import reqLogger from "./middlewares/req.middleware.js";
 import logger from "./config/logger.js";
 import { notFoundMiddleware } from "./middlewares/notFound.middleware.js";
+import inventoryCosumer from "./kafka/consumer/inventory.consumer.js";
+import inventoryProducer from "./kafka/producer/inventory.producer.js";
 
 const app = express();
 
@@ -34,6 +36,7 @@ const startServer = async () => {
         `${config.SERVICE_NAME} is listen at http://localhost:${config.PORT}`,
       );
     });
+    await inventoryCosumer.start();
   } catch (error) {
     logger.info("failed to start server", error);
     process.exit(1);

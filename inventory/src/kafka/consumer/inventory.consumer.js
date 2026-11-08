@@ -1,6 +1,7 @@
 import { KAFKA_TOPICS } from "../../../../shared/constans/kafkaTopics.js";
 import { connectConsumer, consumer } from "../../config/kafka.js";
 import logger from "../../config/logger.js";
+import { inventoryService } from "../../services/inventory.services.js";
 
 class InventoryConsumer {
   async start() {
@@ -21,14 +22,14 @@ class InventoryConsumer {
 
           switch (topic) {
             case KAFKA_TOPICS.CREATE_SCHEDULE:
-              // searchService.indexSchedule(value);
+              await inventoryService.initializeInventory(value);
               break;
 
             default:
               break;
           }
         } catch (error) {
-          logger.error("Error in inventory consumer consumer", { error });
+          logger.error("Error in inventory consumer consumer" + error.message);
         }
       },
     });
