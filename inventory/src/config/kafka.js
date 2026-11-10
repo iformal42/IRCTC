@@ -1,7 +1,7 @@
 import { Kafka, logLevel } from "kafkajs";
 import config from "./index.js";
 import logger from "./logger.js";
-const GROUDID = "inventory-service-group";
+const GROUDID = "booking-service-group";
 const kafka = new Kafka({
   clientId: config.KAFKA_CLIENT_ID,
   brokers: [config.KAFKA_BROKER],

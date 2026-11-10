@@ -61,3 +61,5 @@ out/
 Thumbs.db
 
 /generated/prisma
+
+/generated/prisma
